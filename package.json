@@ -1,5 +1,5 @@
 {
-  "name": "amplify-react-mvp",
+  "name": "tha-mvp",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,5 +11,9 @@
   "devDependencies": {
     "typescript": "~5.9.3",
     "vite": "^7.1.7"
+  },
+  "dependencies": {
+    "@aws-amplify/ui-react": "^6.13.0",
+    "aws-amplify": "^6.15.7"
   }
 }
