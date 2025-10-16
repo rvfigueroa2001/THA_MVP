@@ -1,96 +1,191 @@
+/* =========================================
+   COLOR VARIABLES
+   Define the main color scheme for the site
+   ========================================= */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --blue: #2563eb;         /* Calm blue (trustworthy) */
+  --red: #ef4444;          /* Bright red (attention color) */
+  --light-gray: #f9fafb;   /* Light background for sections */
+  --text-color: #1f2937;   /* Dark gray for readable text */
+  --white: #ffffff;        /* Pure white for contrast */
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* =========================================
+   GLOBAL STYLES
+   These styles apply to the entire page
+   ========================================= */
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  margin: 0;                            /* Remove default spacing */
+  font-family: 'Inter', sans-serif;     /* Clean, modern font */
+  background-color: var(--light-gray);  /* Light gray background */
+  color: var(--text-color);             /* Dark text for readability */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* =========================================
+   HEADER SECTION
+   Contains the logo and navigation menu
+   ========================================= */
+.header {
+  display: flex;                                  /* Arrange items horizontally */
+  justify-content: space-between;                 /* Space between logo & menu */
+  align-items: center;                            /* Center vertically */
+  padding: 1rem 2rem;                             /* Inner spacing */
+  background-color: var(--white);                 /* White background */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);      /* Light shadow under header */
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #3178c6aa);
+  font-size: 1.5rem;                              /* Larger font for logo */
+  font-weight: 700;                               /* Bold text */
+  color: var(--blue);                             /* Blue for trust */
 }
 
+.nav a {
+  margin: 0 0.75rem;                              /* Space between links */
+  text-decoration: none;                          /* Remove underlines */
+  color: var(--text-color);                       /* Normal dark text */
+  font-weight: 500;                               /* Slightly bold */
+}
+
+.nav a:hover {
+  color: var(--red);                              /* Red hover effect */
+}
+
+/* =========================================
+   HERO SECTION
+   Main banner with search bar
+   ========================================= */
+.hero {
+  text-align: center;                             /* Center text and elements */
+  background: linear-gradient(135deg, var(--blue), #60a5fa); /* Blue gradient */
+  color: var(--white);                            /* White text for contrast */
+  padding: 5rem 1rem;                             /* Large vertical spacing */
+}
+
+.hero h1 {
+  font-size: 2.5rem;                              /* Big, clear title */
+  margin-bottom: 1rem;                            /* Space below heading */
+}
+
+.hero p {
+  font-size: 1.2rem;                              /* Slightly larger paragraph */
+  margin-bottom: 2rem;                            /* Space below text */
+}
+
+/* Search bar container */
+.search-bar {
+  display: flex;                                  /* Align input & button side by side */
+  justify-content: center;                        /* Center horizontally */
+  gap: 0.5rem;                                    /* Space between input & button */
+}
+
+/* Input field styling */
+.search-bar input {
+  padding: 0.75rem;                               /* Inner space */
+  border: none;                                   /* Remove default border */
+  border-radius: 0.5rem;                          /* Rounded corners */
+  width: 250px;                                   /* Input width */
+}
+
+/* Search button styling */
+.search-bar button {
+  background-color: var(--red);                   /* Red button */
+  color: var(--white);                            /* White text */
+  border: none;                                   /* No border */
+  padding: 0.75rem 1.25rem;                       /* Inner spacing */
+  border-radius: 0.5rem;                          /* Rounded corners */
+  cursor: pointer;                                /* Pointer cursor on hover */
+  font-weight: 600;                               /* Bold text */
+}
+
+.search-bar button:hover {
+  background-color: #dc2626;                      /* Darker red on hover */
+}
+
+/* =========================================
+   PROGRAMS SECTION
+   Displays program cards (Rental, Buyer Help, etc.)
+   ========================================= */
+.programs {
+  padding: 3rem 2rem;                             /* Space around section */
+  text-align: center;                             /* Centered text */
+}
+
+/* Grid layout for cards */
+.program-cards {
+  display: grid;                                  /* Grid for responsive layout */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Auto resize */
+  gap: 1rem;                                      /* Space between cards */
+  margin-top: 1.5rem;                             /* Space above grid */
+}
+
+/* Individual program card styling */
 .card {
-  padding: 2em;
+  background-color: var(--white);                 /* White background */
+  border-radius: 1rem;                            /* Rounded corners */
+  padding: 1.5rem;                                /* Inner padding */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);      /* Soft shadow for depth */
 }
 
-.read-the-docs {
-  color: #888;
+/* Program titles */
+.card h3 {
+  color: var(--blue);                             /* Blue headings for consistency */
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+/* =========================================
+   HOW IT WORKS SECTION
+   Step-by-step explanation
+   ========================================= */
+.how-it-works {
+  background-color: var(--blue);                  /* Blue background */
+  color: var(--white);                            /* White text */
+  padding: 3rem 2rem;                             /* Section padding */
+  text-align: center;                             /* Centered content */
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Flex layout for steps */
+.steps {
+  display: flex;                                  /* Align steps in a row */
+  flex-wrap: wrap;                                /* Wrap on small screens */
+  justify-content: center;                        /* Center steps horizontally */
+  gap: 2rem;                                      /* Space between steps */
+  margin-top: 1.5rem;                             /* Space above steps */
+}
+
+/* Each step card */
+.step {
+  max-width: 250px;                               /* Keep steps a reasonable width */
+}
+
+/* Step titles */
+.step h3 {
+  color: var(--white);                            /* Keep text white for contrast */
+}
+
+/* =========================================
+   FOOTER SECTION
+   Contains copyright & links
+   ========================================= */
+.footer {
+  text-align: center;                             /* Center content */
+  background-color: #1e3a8a;                      /* Darker blue for footer */
+  color: var(--white);                            /* White text */
+  padding: 1.5rem;                                /* Inner spacing */
+  margin-top: 2rem;                               /* Space above footer */
+}
+
+/* Footer link container */
+.footer-links {
+  margin-top: 0.5rem;                             /* Space above links */
+}
+
+/* Footer links */
+.footer-links a {
+  color: var(--white);                            /* White text */
+  text-decoration: none;                          /* Remove underlines */
+  margin: 0 0.5rem;                               /* Space between links */
+}
+
+.footer-links a:hover {
+  text-decoration: underline;                     /* Underline on hover */
 }
