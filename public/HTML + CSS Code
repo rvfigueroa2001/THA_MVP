@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AffordaHouse – Home</title>
+  <meta name="description" content="Base page for an affordable housing portal." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🏠</text></svg>">
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111738;
+      --panel-2: #0e1530;
+      --text: #eef2ff;
+      --muted: #c7cbe6;
+      --brand: #6aa9ff;
+      --brand-2: #7dd6ff;
+      --ok: #86efac;
+      --warn: #fde047;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text); background: radial-gradient(1200px 900px at 10% -10%, #16204a 0%, var(--bg) 55%);
+      line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1100px, 96%); margin-inline: auto; }
+    header { position: sticky; top: 0; z-index: 30; backdrop-filter: saturate(150%) blur(8px); background: rgba(10, 14, 40, .6); border-bottom: 1px solid rgba(255,255,255,.06); }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .3px; }
+    .brand .logo { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: var(--shadow); }
+    .links { display: flex; align-items: center; gap: 18px; }
+    .links a { color: var(--muted); font-weight: 500; }
+    .links a:hover { color: var(--text); }
+    .cta { padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #0b1020; font-weight: 700; box-shadow: var(--shadow); }
+    .menu-btn { display: none; }
+
+    .hero { position: relative; padding: 64px 0 32px; }
+    .hero-inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; align-items: center; }
+    h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.1; margin: 0 0 12px; }
+    .lead { color: var(--muted); font-size: clamp(14px, 1.4vw, 18px); }
+    .hero-card { margin-top: 22px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; }
+    .search { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; }
+    .input, select { width: 100%; padding: 12px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: #0e1530; color: var(--text); }
+    .btn { border: 0; padding: 12px 16px; border-radius: 12px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #0b1020; font-weight: 800; cursor: pointer; }
+    .btn:hover { filter: brightness(1.05); }
+    .hero-ill { border-radius: var(--radius); min-height: 260px; background: radial-gradient(500px 300px at 80% 20%, rgba(109,168,255,.4), transparent), url('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1600&auto=format&fit=crop') center/cover; border: 1px solid rgba(255,255,255,.08); box-shadow: var(--shadow); }
+
+    section { padding: 48px 0; }
+    .section-title { font-size: 22px; margin: 0 0 8px; }
+    .section-sub { color: var(--muted); margin-bottom: 18px; }
+    .grid { display: grid; gap: 16px; }
+
+    .card { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+    .card h3 { margin: 0 0 6px; font-size: 18px; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 10px; background: rgba(134, 239, 172, .12); border: 1px solid rgba(134, 239, 172, .35); color: var(--ok); font-weight: 700; font-size: 12px; }
+    .inline { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    .listing { display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: center; }
+    .listing img { width: 120px; height: 90px; object-fit: cover; border-radius: 12px; border: 1px solid rgba(255,255,255,.09); }
+    .listing .meta { color: var(--muted); font-size: 14px; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .step-num { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: rgba(125,214,255,.15); border: 1px solid rgba(125,214,255,.45); font-weight: 800; }
+
+    .newsletter { display: grid; grid-template-columns: 1.3fr .7fr; gap: 16px; align-items: center; }
+    .newsletter form { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+
+    footer { border-top: 1px solid rgba(255,255,255,.08); padding: 30px 0 60px; color: var(--muted); }
+
+    @media (max-width: 900px){
+      .hero-inner { grid-template-columns: 1fr; }
+      .search { grid-template-columns: 1fr 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .newsletter { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px){
+      .links { display:none; }
+      .menu-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid rgba(255,255,255,.18); color: var(--text); padding: 8px 10px; border-radius: 10px; }
+      .search { grid-template-columns: 1fr; }
+    }
+
+    /* Simple form styles for the new tab */
+    .form-wrap { max-width: 880px; margin: 0 auto; padding: 28px; }
+    .form-grid { display: grid; gap: 12px; grid-template-columns: repeat(12, 1fr); }
+    .col-12 { grid-column: span 12; }
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
+    .label { font-weight: 700; margin-bottom: 4px; display:block; }
+    .help { color: var(--muted); font-size: 12px; }
+    .input2 { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,.14); background:#0e1530; color: var(--text); }
+    .checkrow { display:flex; gap:12px; align-items:center; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#">
+        <span class="logo">🏠</span>
+        <span>AffordaHouse</span>
+      </a>
+      <nav class="links" aria-label="Main">
+        <a href="#programs">Programs</a>
+        <a href="#properties">Properties</a>
+        <a href="#how-it-works">How it Works</a>
+        <a href="#resources">Resources</a>
+        <a class="cta" href="#contact">Sign In</a>
+      </nav>
+      <button class="menu-btn" aria-label="Open menu" onclick="alert('Here you could open a mobile menu')">☰ Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div>
+          <h1>Affordable housing and federal help in one place</h1>
+          <div class="hero-card" role="search" aria-label="Housing search">
+            <form class="search" onsubmit="event.preventDefault(); alert('Execute search…')">
+              <input class="input" type="text" placeholder="City or County" aria-label="Location" />
+              <select aria-label="Price range">
+                <option value="" selected>Price (monthly)</option>
+                <option>Up to $800</option>
+                <option>$800 – $1,200</option>
+                <option>$1,200 – $1,800</option>
+                <option>$1,800+</option>
+              </select>
+              <select aria-label="Rooms">
+                <option value="" selected>Rooms</option>
+                <option>Studio</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3+</option>
+              </select>
+              <button class="btn" type="submit">Search</button>
+            </form>
+          </div>
+          <div class="inline" style="margin-top:10px">
+            <span class="badge">✔ Verified Weekly</span>
+            <span class="badge" style="background: rgba(253,224,71,.12); border-color: rgba(253,224,71,.45); color: var(--warn);">ℹ Local Programs</span>
+          </div>
+        </div>
+        <div class="hero-ill" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Featured Programs -->
+    <section id="programs">
+      <div class="container">
+        <h2 class="section-title">Featured Programs</h2>
+        <p class="section-sub">Connect with organizations offering rental assistance, deposits, counseling, and more.</p>
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+          <article class="card">
+            <h3>Rental Assistance</h3>
+            <p>Temporary help for rent payments and eviction prevention.</p>
+            <!-- MOD: opens a brand-new tab with a full application form -->
+            <div class="inline">
+              <button type="button" class="cta" id="open-rental-form-btn">Apply Now</button>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Deposit & Moving Support</h3>
+            <p>Assistance for deposits, application fees, and initial costs.</p>
+            <div class="inline"><a class="cta" href="#">Learn More</a></div>
+          </article>
+          <article class="card">
+            <h3>Housing Counseling</h3>
+            <p>Financial education, landlord mediation, and planning.</p>
+            <div class="inline"><a class="cta" href="#">Learn More</a></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Property Listings -->
+    <section id="properties">
+      <div class="container">
+        <h2 class="section-title">Properties Recommended by Location</h2>
+        <p class="section-sub">Example of listing cards with summarized information.</p>
+        <div class="grid" style="grid-template-columns: 1fr 1fr;">
+          <article class="card listing">
+            <img alt="Sample apartment" src="https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=600&auto=format&fit=crop" />
+            <div>
+              <h3>Blue Residences • 2B/1B</h3>
+              <div class="meta">$1,150/month • 55 m² • Downtown</div>
+              <div class="inline" style="margin-top:8px"><a class="cta" href="#">Details</a><a href="#">Save</a></div>
+            </div>
+          </article>
+          <article class="card listing">
+            <img alt="Sample condo" src="https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=600&auto=format&fit=crop" />
+            <div>
+              <h3>Green Park • 1B/1B</h3>
+              <div class="meta">$950/month • 42 m² • Near Schools</div>
+              <div class="inline" style="margin-top:8px"><a class="cta" href="#">Details</a><a href="#">Save</a></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works">
+      <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-sub">Quick guide for new users.</p>
+        <div class="steps">
+          <article class="card">
+            <div class="inline"><span class="step-num">1</span><h3 style="margin:0">Tell Us About Your Situation</h3></div>
+            <p>Fill out a simple form with income, family size, and preferred location.</p>
+          </article>
+          <article class="card">
+            <div class="inline"><span class="step-num">2</span><h3 style="margin:0">Get Recommendations</h3></div>
+            <p>Receive program and housing matches based on your eligibility.</p>
+          </article>
+          <article class="card">
+            <div class="inline"><span class="step-num">3</span><h3 style="margin:0">Connect & Apply</h3></div>
+            <p>Contact organizations directly and save your progress.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section id="resources">
+      <div class="container newsletter card">
+        <div>
+          <h2 style="margin-top:0">Get Updates</h2>
+          <p class="section-sub">News on programs, new units, and housing tips.</p>
+        </div>
+        <form onsubmit="event.preventDefault(); alert('Subscription sent');">
+          <label class="visually-hidden" for="email">Email</label>
+          <input class="input" id="email" type="email" placeholder="Your email address" required />
+          <button class="btn" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <div class="container">
+      <div class="inline" style="justify-content: space-between; width: 100%; align-items: flex-start; gap: 18px; flex-wrap: wrap;">
+        <div>
+          <div class="brand"><span class="logo">🏠</span><strong>Housing Collier</strong></div>
+          <p style="margin:8px 0 0">HTML base ready to customize. © <span id="year"></span></p>
+        </div>
+        <div class="inline" style="gap: 24px">
+          <a href="#programs">Programs</a>
+          <a href="#properties">Properties</a>
+          <a href="#how-it-works">How it Works</a>
+          <a href="#resources">Resources</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Template for the new-tab Rental Assistance form -->
+  <template id="rental-form-template">
+    <!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Application</title>
+      <style>
+        body{margin:0;font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial; background: #0b1020; color:#eef2ff}
+        header{position:sticky;top:0;z-index:20;background:#0e1530;border-bottom:1px solid rgba(255,255,255,.08)}
+        .brand{display:flex;align-items:center;gap:10px;font-weight:800;padding:12px 16px}
+        .logo{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(135deg,#6aa9ff,#7dd6ff)}
+        .form-wrap{max-width:880px;margin:0 auto;padding:28px}
+        .card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:18px}
+        .title{font-size:24px;margin:0 0 8px}
+        .muted{color:#c7cbe6}
+        .grid{display:grid;gap:12px;grid-template-columns:repeat(12,1fr)}
+        .col-12{grid-column:span 12}
+        .col-6{grid-column:span 6}
+        .col-4{grid-column:span 4}
+        label{font-weight:700;margin-bottom:4px;display:block}
+        input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#0e1530;color:#eef2ff}
+        .row{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+        .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+        .btn{border:0;padding:12px 16px;border-radius:12px;background:linear-gradient(135deg,#6aa9ff,#7dd6ff);color:#0b1020;font-weight:800;cursor:pointer}
+        .btn-sec{background:transparent;border:1px solid rgba(255,255,255,.18);color:#eef2ff}
+        .note{font-size:12px;color:#c7cbe6}
+        .section{margin-top:16px}
+        .hr{height:1px;background:rgba(255,255,255,.08);margin:16px 0}
+        /* Checkbox styling */
+.checkrow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.checkrow input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #c7cbe6;
+  border-radius: 4px;
+  background: #0e1530;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* Efecto al pasar el mouse */
+.checkrow input[type="checkbox"]:hover {
+  border-color: #0df94c;
+}
+
+/* Fondo y borde cuando está marcado */
+.checkrow input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #6aff76, #30e508);
+  border-color: #1afc65;
+}
+
+/* Tick block */
+.checkrow input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 12px;
+  border-right: 3px solid #0b1020; /* color del tick */
+  border-bottom: 3px solid #0b1020;
+  top: 2px;
+  left: 6px;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.15s ease-in;
+}
+
+/* Muestra el tick solo cuando está marcado */
+.checkrow input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+
+.checkrow label {
+  font-weight: 600;
+  color: #eef2ff;
+  line-height: 1.4;
+}
+
+        @media (max-width:720px){.row{grid-template-columns:1fr}.col-6{grid-column:span 12}.col-4{grid-column:span 12}}
+      </style>
+    </head>
+    <body>
+      <header>
+        <div class="brand"><span class="logo">🏠</span> <span>Application</span></div>
+      </header>
+      <main class="form-wrap">
+        <div class="card">
+          <h1 class="title">Applicant Information</h1>
+          <p class="muted">Complete this form to check your eligibility for rental assistance and to streamline your application with local providers.</p>
+          <form id="rentalAppForm">
+            <div class="grid">
+              <div class="col-6">
+                <label for="fullName">Full Name</label>
+                <input id="fullName" name="fullName" required autocomplete="name" />
+              </div>
+              <div class="col-6">
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone" type="tel" required autocomplete="tel" />
+              </div>
+              <div class="col-6">
+                <label for="email2">Email</label>
+                <input id="email2" name="email" type="email" required autocomplete="email" />
+              </div>
+              <div class="col-6">
+                <label for="typeofemail">Select</label>
+                <select id="typeofemail" name="typeofemail" required>
+                  <option value="" selected>Other</option>
+                  <option>@gmail.com</option>
+                  <option>@hotmail.com</option>
+                  <option>@live.com</option>
+                  <option>@yahoo.com</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="lang">Preferred Language</label>
+                <select id="lang" name="lang" required>
+                  <option value="" selected>Select…</option>
+                  <option>English</option>
+                  <option>Español</option>
+                </select>
+              </div>
+              <div class="col-12 section">
+                <label for="address">Current Address</label>
+                <input id="address" name="address" placeholder="Street, City, ZIP" required autocomplete="street-address" />
+              </div>
+              <div class="col-4">
+                <label for="householdSize">Household Size</label>
+                <input id="householdSize" name="householdSize" type="number" min="1" required />
+              </div>
+              <div class="col-4">
+                <label for="bedroomsNeed">Bedrooms Needed</label>
+                <select id="bedroomsNeed" name="bedroomsNeed" required>
+                  <option value="" selected>Select…</option>
+                  <option>Studio</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3+</option>
+                </select>
+              </div>
+              <div class="col-4">
+                <label for="county">County</label>
+                <input id="county" name="county" placeholder="e.g., Collier" required />
+              </div>
+            </div>
+
+            <div class="hr"></div>
+            <h2 class="title" style="font-size:18px">Income & Employment</h2>
+            <div class="grid">
+              <div class="col-6">
+                <label for="monthlyIncome">Monthly Household Income (before taxes)</label>
+                <input id="monthlyIncome" name="monthlyIncome" type="number" min="0" step="500" required />
+              </div>
+              <div class="col-6">
+                <label for="incomeSources">Income Sources</label>
+                <select id="incomeSources" name="incomeSources" multiple>
+                  <option>Employment</option>
+                  <option>Social Security/SSI</option>
+                  <option>Unemployment</option>
+                  <option>Child Support/Alimony</option>
+                  <option>Other</option>
+                </select>
+                <p class="note">Hold Ctrl/⌘ to select multiple.</p>
+              </div>
+              <div class="col-6">
+                <label for="employmentStatus">Employment Status</label>
+                <select id="employmentStatus" name="employmentStatus" required>
+                  <option value="" selected>Select…</option>
+                  <option>Full-time</option>
+                  <option>Part-time</option>
+                  <option>Temporary/Gig</option>
+                  <option>Unemployed</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="hr"></div>
+            <h2 class="title" style="font-size:18px">Housing Situation</h2>
+            <div class="grid">
+              <div class="col-6">
+                <label for="currentRent">Current Monthly Rent</label>
+                <input id="currentRent" name="currentRent" type="number" min="0" step="0.01" required />
+              </div>
+              <div class="col-6">
+                <label for="leaseEnd">Lease End Date</label>
+                <input id="leaseEnd" name="leaseEnd" type="date" />
+              </div>
+              <div class="col-12">
+                <label for="risk">Are you at risk of eviction or behind on rent?</label>
+                <select id="risk" name="risk" required>
+                  <option value="" selected>Select…</option>
+                  <option>No</option>
+                  <option>Yes, behind on rent</option>
+                  <option>Yes, received notice</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label for="specialNeeds">Accessibility or special needs (optional)</label>
+                <textarea id="specialNeeds" name="specialNeeds" rows="3" placeholder="Wheelchair access, service animal, etc."></textarea>
+              </div>
+            </div>
+
+            <div class="hr"></div>
+            <h2 class="title" style="font-size:18px">Consent</h2>
+            <p class="note">By submitting, you agree that your information may be securely shared with participating nonprofit providers to determine eligibility.</p>
+            <div class="grid">
+              <div class="col-12 checkrow">
+                <input type="checkbox" id="consent" required aria-required="true" />
+                <label for="consent">I consent to data sharing with local housing providers.</label>
+              </div>
+              <div class="col-6">
+                <p><label for="signature">Type Your Full Name (Signature)</label></p>
+                <input id="signature" name="signature" required />
+              </div>
+              <div class="col-6">
+                <p><label for="signDate">Date</label></p>
+                <input id="signDate" name="signDate" type="date" required />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn" type="submit">Submit Application</button>
+              <button class="btn btn-sec" type="button" id="downloadDraft">Download Draft (JSON)</button>
+            </div>
+          </form>
+        </div>
+      </main>
+      <script>
+        (function(){
+          const form = document.getElementById('rentalAppForm');
+          form.addEventListener('submit', function(e){
+            e.preventDefault();
+            alert('Application submitted! You can also download a copy. A partner organization will follow up if you qualify.');
+          });
+          document.getElementById('downloadDraft').addEventListener('click', ()=>{
+            const data = Object.fromEntries(new FormData(form).entries());
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'rental-assistance-application.json';
+            document.body.appendChild(a); a.click(); a.remove();
+            URL.revokeObjectURL(url);
+          });
+        })();
+      </script>
+    </body>
+    </html>
+  </template>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Open the Rental Assistance form in a brand-new tab and render the template content there.
+    const openBtn = document.getElementById('open-rental-form-btn');
+const tpl = document.getElementById('rental-form-template');
+openBtn.addEventListener('click', function(ev){
+  ev.preventDefault(); // avoid default nav that can cause about:blank
+  const w = window.open('about:blank', '_blank');
+  if(!w){
+    alert('Please allow pop-ups for this site to open the application form.');
+    return;
+  }
+  const html = tpl.innerHTML;
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+});
+  </script>
+</body>
+</html>
+
