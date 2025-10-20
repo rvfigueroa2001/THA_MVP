@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AffordaHouse – Home</title>
+  <meta name="description" content="Base page for an affordable housing portal." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🏠</text></svg>">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="container nav">
+        <a class="brand" href="#">
+          <span class="logo">🏠</span>
+          <span>AffordaHouse</span>
+        </a>
+        <nav class="links" aria-label="Main">
+          <a href="#programs">Programs</a>
+          <a href="#properties">Properties</a>
+          <a href="#how-it-works">How it Works</a>
+          <a href="#resources">Resources</a>
+          <a class="cta" href="#contact">Sign In</a>
+        </nav>
+        <button class="menu-btn" aria-label="Open menu" onclick="alert('Here you could open a mobile menu')">☰ Menu</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="container hero-inner">
+          <div>
+            <h1>Affordable housing and federal help in one place</h1>
+            <div class="hero-card" role="search" aria-label="Housing search">
+              <form class="search" onsubmit="event.preventDefault(); alert('Execute search…')">
+                <input class="input" type="text" placeholder="City or County" aria-label="Location" />
+                <select aria-label="Price range">
+                  <option value="" selected>Price (monthly)</option>
+                  <option>Up to $800</option>
+                  <option>$800 – $1,200</option>
+                  <option>$1,200 – $1,800</option>
+                  <option>$1,800+</option>
+                </select>
+                <select aria-label="Rooms">
+                  <option value="" selected>Rooms</option>
+                  <option>Studio</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3+</option>
+                </select>
+                <button class="btn" type="submit">Search</button>
+              </form>
+            </div>
+            <div class="inline" style="margin-top:10px">
+              <span class="badge">✔ Verified Weekly</span>
+              <span class="badge" style="background: rgba(253,224,71,.12); border-color: rgba(253,224,71,.45); color: var(--warn);">ℹ Local Programs</span>
+            </div>
+          </div>
+          <div class="hero-ill" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <!-- Featured Programs -->
+      <section id="programs">
+        <div class="container">
+          <h2 class="section-title">Featured Programs</h2>
+          <p class="section-sub">Connect with organizations offering rental assistance, deposits, counseling, and more.</p>
+          <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+            <article class="card">
+              <h3>Rental Assistance</h3>
+              <p>Temporary help for rent payments and eviction prevention.</p>
+              <div class="inline">
+                <button type="button" class="cta" id="open-rental-form-btn">Apply Now</button>
+              </div>
+            </article>
+            <article class="card">
+              <h3>Deposit & Moving Support</h3>
+              <p>Assistance for deposits, application fees, and initial costs.</p>
+              <div class="inline"><a class="cta" href="#">Learn More</a></div>
+            </article>
+            <article class="card">
+              <h3>Housing Counseling</h3>
+              <p>Financial education, landlord mediation, and planning.</p>
+              <div class="inline"><a class="cta" href="#">Learn More</a></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Property Listings -->
+      <section id="properties">
+        <div class="container">
+          <h2 class="section-title">Properties Recommended by Location</h2>
+          <p class="section-sub">Example of listing cards with summarized information.</p>
+          <div class="grid" style="grid-template-columns: 1fr 1fr;">
+            <article class="card listing">
+              <img alt="Sample apartment" src="https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=600&auto=format&fit=crop" />
+              <div>
+                <h3>Blue Residences • 2B/1B</h3>
+                <div class="meta">$1,150/month • 55 m² • Downtown</div>
+                <div class="inline" style="margin-top:8px"><a class="cta" href="#">Details</a><a href="#">Save</a></div>
+              </div>
+            </article>
+            <article class="card listing">
+              <img alt="Sample condo" src="https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=600&auto=format&fit=crop" />
+              <div>
+                <h3>Green Park • 1B/1B</h3>
+                <div class="meta">$950/month • 42 m² • Near Schools</div>
+                <div class="inline" style="margin-top:8px"><a class="cta" href="#">Details</a><a href="#">Save</a></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works -->
+      <section id="how-it-works">
+        <div class="container">
+          <h2 class="section-title">How It Works</h2>
+          <p class="section-sub">Quick guide for new users.</p>
+          <div class="steps">
+            <article class="card">
+              <div class="inline"><span class="step-num">1</span><h3 style="margin:0">Tell Us About Your Situation</h3></div>
+              <p>Fill out a simple form with income, family size, and preferred location.</p>
+            </article>
+            <article class="card">
+              <div class="inline"><span class="step-num">2</span><h3 style="margin:0">Get Recommendations</h3></div>
+              <p>Receive program and housing matches based on your eligibility.</p>
+            </article>
+            <article class="card">
+              <div class="inline"><span class="step-num">3</span><h3 style="margin:0">Connect & Apply</h3></div>
+              <p>Contact organizations directly and save your progress.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter -->
+      <section id="resources">
+        <div class="container newsletter card">
+          <div>
+            <h2 style="margin-top:0">Get Updates</h2>
+            <p class="section-sub">News on programs, new units, and housing tips.</p>
+          </div>
+          <form onsubmit="event.preventDefault(); alert('Subscription sent');">
+            <label class="visually-hidden" for="email">Email</label>
+            <input class="input" id="email" type="email" placeholder="Your email address" required />
+            <button class="btn" type="submit">Subscribe</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact">
+      <div class="container">
+        <div class="inline" style="justify-content: space-between; width: 100%; align-items: flex-start; gap: 18px; flex-wrap: wrap;">
+          <div>
+            <div class="brand"><span class="logo">🏠</span><strong>Housing Collier</strong></div>
+            <p style="margin:8px 0 0">HTML base ready to customize. © <span id="year"></span></p>
+          </div>
+          <div class="inline" style="gap: 24px">
+            <a href="#programs">Programs</a>
+            <a href="#properties">Properties</a>
+            <a href="#how-it-works">How it Works</a>
+            <a href="#resources">Resources</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
