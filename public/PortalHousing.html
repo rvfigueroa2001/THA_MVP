@@ -519,3 +519,524 @@
   </script>
 </body>
 </html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AffordaHouse – Home</title>
+  <meta name="description" content="Base page for an affordable housing portal." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🏠</text></svg>">
+
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111738;
+      --panel-2: #0e1530;
+      --text: #eef2ff;
+      --muted: #c7cbe6;
+      --brand: #6aa9ff;
+      --brand-2: #7dd6ff;
+      --ok: #86efac;
+      --warn: #fde047;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 900px at 10% -10%, #16204a 0%, var(--bg) 55%);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1100px, 96%); margin-inline: auto; }
+
+    /* ================= HEADER ================= */
+    header {
+      position: sticky; top: 0; z-index: 200;
+      backdrop-filter: saturate(150%) blur(8px);
+      background: rgba(10, 14, 40, .6);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .3px; }
+    .links { display: flex; align-items: center; gap: 18px; }
+    .links a { color: var(--muted); font-weight: 500; }
+    .links a:hover { color: var(--text); }
+    .cta { padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #0b1020; font-weight: 700; box-shadow: var(--shadow); }
+    .menu-btn { display: none; }
+
+    /* Botón Back (oculto por defecto) */
+    .back-btn {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    body.app-open header .links { display: none; }
+    body.app-open header .back-btn { display: inline-flex; }
+
+    /* ================= HERO ================= */
+    .hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .hero-ill {
+      position: absolute; inset: 0;
+      width: 100vw; height: 100vh; z-index: 0;
+      background:
+        radial-gradient(600px 400px at 80% 20%, rgba(109,168,255,.4), transparent),
+        url('https://3das.com/wp-content/uploads/2024/01/1a-neighborhood_typical-1545x1030.jpg') center/cover no-repeat;
+      filter: brightness(0.55);
+    }
+    .hero-inner { position: relative; z-index: 1; color: white; max-width: 750px; margin: 0 auto; padding: 0 24px; }
+    .hero-inner h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.2; margin-bottom: 32px; max-width: 700px; margin-inline: auto; }
+
+    .hero-card {
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(8px);
+      border-radius: 18px;
+      padding: 28px 32px;
+      width: 300px;
+      height: 90px;           /* un poco más alto para respirar */
+      display: inline-block;
+      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.4);
+    }
+    .hero-card .btn {
+      padding: 14px 32px; border-radius: 12px; font-size: 1rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #0b1020; border: none; cursor: pointer; transition: filter 0.2s ease;
+    }
+    .hero-card .btn:hover { filter: brightness(1.1); }
+
+    .badges-below { margin-top: 14px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 10px;
+      background: rgba(134, 239, 172, .12); border: 1px solid rgba(134, 239, 172, .35);
+      color: var(--ok); font-weight: 700; font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .hero-inner h1 { font-size: 1.8rem; }
+      .hero-card, .hero-card .btn { width: 100%; }
+    }
+
+    section { padding: 48px 0; }
+    .section-title { font-size: 22px; margin: 0 0 8px; }
+    .section-sub { color: var(--muted); margin-bottom: 18px; }
+    .grid { display: grid; gap: 16px; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+
+    .newsletter { display: grid; grid-template-columns: 1.3fr .7fr; gap: 16px; align-items: center; }
+    .newsletter form { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px; }
+    #email {
+      flex: 1; min-width: 260px; padding: 12px 14px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.12); background: #0e1530; color: var(--text);
+    }
+    .newsletter .btn {
+      padding: 12px 22px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #0b1020; font-weight: 700; cursor: pointer; border: none; box-shadow: var(--shadow);
+    }
+    .newsletter .btn:hover { filter: brightness(1.1); }
+    .consent-wrap { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    #consent { width: 12px; height: 12px; accent-color: var(--brand); cursor: pointer; flex-shrink: 0; }
+    label[for="consent"] { font-size: 14px; color: var(--muted); line-height: 1.4; cursor: pointer; user-select: none; }
+
+    footer { border-top: 1px solid rgba(255,255,255,.08); padding: 30px 0 60px; color: var(--muted); }
+
+    @media (max-width: 900px){
+      .newsletter { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px){
+      .links { display:none; }
+      .menu-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid rgba(255,255,255,.18); color: var(--text); padding: 8px 10px; border-radius: 10px; }
+    }
+
+    /* ============== SLIDE OVERLAY ============== */
+    .page-wrapper { position: relative; width: 100%; height: auto; overflow: visible; z-index: 10; }
+    .hero.main-page { position: relative; }
+
+    .app-page {
+      position: fixed;
+      top: 0; left: 100%;
+      width: 100vw; height: 100vh;
+      background: radial-gradient(1200px 900px at 10% -10%, #16204a 0%, #0b1020 55%);
+      color: #eef2ff;
+      padding: 40px;
+      transition: transform 0.8s ease-in-out;
+      transform: translateX(0);
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .page-wrapper.open .app-page { transform: translateX(-100%); }
+
+    /* Estilos del formulario (template) */
+    .form-wrap { max-width: 880px; margin: 0 auto; padding: 28px; }
+    .title { font-size: 24px; margin: 0 0 8px; }
+    .muted { color: #c7cbe6; }
+    .hr { height:1px; background: rgba(255,255,255,.08); margin: 16px 0; }
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(12, 1fr); }
+    .col-12 { grid-column: span 12; } .col-6 { grid-column: span 6; } .col-4 { grid-column: span 4; }
+    label { font-weight: 700; margin-bottom: 4px; display: block; }
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14); background: #0e1530; color: #eef2ff;
+    }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .btn-sec { background: transparent; border: 1px solid rgba(255,255,255,.18); color: #eef2ff; }
+    .checkrow { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    @media (max-width:720px){ .col-6, .col-4 { grid-column: span 12; } }
+
+    /* ========== OVERRIDES para centrar y borde azul del botón ========== */
+    .hero-card {
+      display: flex;               /* override: centra contenido */
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-card .inline {
+      display: flex;               /* override: asegura centrado horizontal */
+      justify-content: center;
+      width: 100%;
+    }
+    .hero-card .btn {
+      border: 2px solid var(--brand);                 /* marco azul */
+      box-shadow: 0 0 0 0 rgba(106,169,255,0);
+      transition: filter .2s ease, box-shadow .2s ease, transform .02s ease;
+    }
+    .hero-card .btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(106,169,255,.35);    /* glow accesible */
+    }
+    .hero-card .btn:active { transform: translateY(1px); }
+
+    /* Centrado perfecto del contenido del hero */
+.hero {
+  display: flex;               /* ya lo tenías, reafirmamos */
+  align-items: center;         /* centra vertical */
+  justify-content: center;     /* centra horizontal */
+  text-align: center;
+}
+
+/* Asegura que todo dentro del hero quede centrado */
+.hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;         /* alinea el card al centro */
+  gap: 24px;                   /* espacio entre h1 y card */
+  margin: 0 auto;              /* centra el contenedor */
+}
+
+/* Centra el card como bloque */
+.hero-card {
+  margin: 0 auto;              /* por si el contenedor crece */
+}
+
+/* Por si algún wrapper interior estira ancho: lo centramos igual */
+.hero-card .inline {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#"><span>AffordaHouse</span></a>
+
+      <!-- Botón Back (aparece con el slide abierto) -->
+      <button class="back-btn" id="backFromApp" type="button" aria-label="Back to home">← Back</button>
+
+      <nav class="links" aria-label="Main">
+        <a href="#programs">Programs</a>
+        <a href="#properties">Properties</a>
+        <a href="#how-it-works">How it Works</a>
+        <a href="#resources">Resources</a>
+        <a class="cta" href="#contact">Sign In</a>
+      </nav>
+
+      <button class="menu-btn" aria-label="Open menu" onclick="alert('Here you could open a mobile menu')">☰ Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ========= WRAPPER DEL SLIDE ========= -->
+    <div class="page-wrapper">
+      <!-- ======= HERO ======= -->
+      <section class="hero main-page">
+        <div class="hero-ill" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <h1>Affordable Housing & Federal Help in One Place</h1>
+          <div class="hero-card" role="search" aria-label="Housing search">
+            <div class="inline">
+              <button class="btn" id="open-rental-form-btn" type="button">Start Application</button>
+            </div>
+          </div>
+          <div class="badges-below">
+            <span class="badge">✔ Verified Weekly</span>
+            <span class="badge" style="background: rgba(253,224,71,.12); border-color: rgba(253,224,71,.45); color: var(--warn);">
+              ℹ Local Programs
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= PANTALLA (VACÍA: se llena con el template) ======= -->
+      <section class="app-page"></section>
+    </div>
+
+    <!-- ======= CONTENIDO INFERIOR ======= -->
+    <section id="how-it-works">
+      <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-sub">Quick guide for new users.</p>
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+          <article class="card"><h3>1) Tell Us About Your Situation</h3><p>Fill a simple form with income, family size, and location.</p></article>
+          <article class="card"><h3>2) Get Recommendations</h3><p>Receive program and housing matches based on your eligibility.</p></article>
+          <article class="card"><h3>3) Connect & Apply</h3><p>Contact organizations directly and save your progress.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources">
+      <div class="container newsletter card">
+        <div>
+          <h2 style="margin-top:0">Get Updates</h2>
+          <p class="section-sub">News on programs, new units, and housing tips.</p>
+        </div>
+        <form onsubmit="event.preventDefault(); alert('Subscription sent');">
+          <input class="input" id="email" type="email" placeholder="Your email address" required />
+          <div class="consent-wrap">
+            <input type="checkbox" id="consent" required />
+            <label for="consent">
+              I agree to receive email updates about affordable housing programs. I can unsubscribe at any time.
+            </label>
+          </div>
+          <button class="btn" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <div class="container">
+      <div class="inline" style="justify-content: space-between; width: 100%; align-items: flex-start; gap: 18px; flex-wrap: wrap;">
+        <div>
+          <div class="brand"><span class="logo">🏠</span><strong>Housing Collier</strong></div>
+          <p style="margin:8px 0 0">HTML base ready to customize. © <span id="year"></span></p>
+        </div>
+        <div class="inline" style="gap: 24px">
+          <a href="#programs">Programs</a>
+          <a href="#properties">Properties</a>
+          <a href="#how-it-works">How it Works</a>
+          <a href="#resources">Resources</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== TEMPLATE DEL FORMULARIO ========== -->
+  <template id="rental-form-template">
+    <main class="form-wrap">
+      <div class="card">
+        <h1 class="title">Applicant Information</h1>
+        <p class="muted">Complete this form to check your eligibility for rental assistance and to streamline your application with local providers.</p>
+
+        <form id="rentalAppForm">
+          <div class="grid">
+            <div class="col-6">
+              <label for="fullName">Full Name</label>
+              <input id="fullName" name="fullName" required autocomplete="name" />
+            </div>
+            <div class="col-6">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" required autocomplete="tel" />
+            </div>
+            <div class="col-6">
+              <label for="email2">Email</label>
+              <input id="email2" name="email" type="email" required autocomplete="email" />
+            </div>
+            <div class="col-6">
+              <label for="lang">Preferred Language</label>
+              <select id="lang" name="lang" required>
+                <option value="" selected>Select…</option>
+                <option>English</option>
+                <option>Español</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label for="address">Current Address</label>
+              <input id="address" name="address" placeholder="Street, City, ZIP" required autocomplete="street-address" />
+            </div>
+
+            <div class="col-4">
+              <label for="householdSize">Household Size</label>
+              <input id="householdSize" name="householdSize" type="number" min="1" required />
+            </div>
+            <div class="col-4">
+              <label for="bedroomsNeed">Bedrooms Needed</label>
+              <select id="bedroomsNeed" name="bedroomsNeed" required>
+                <option value="" selected>Select…</option>
+                <option>Studio</option><option>1</option><option>2</option><option>3+</option>
+              </select>
+            </div>
+            <div class="col-4">
+              <label for="county">County</label>
+              <input id="county" name="county" placeholder="e.g., Collier" required />
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <h2 class="title" style="font-size:18px">Income & Employment</h2>
+          <div class="grid">
+            <div class="col-6">
+              <label for="monthlyIncome">Monthly Household Income (before taxes)</label>
+              <input id="monthlyIncome" name="monthlyIncome" type="number" min="0" step="500" required />
+            </div>
+            <div class="col-6">
+              <label for="employmentStatus">Employment Status</label>
+              <select id="employmentStatus" name="employmentStatus" required>
+                <option value="" selected>Select…</option>
+                <option>Full-time</option><option>Part-time</option><option>Temporary/Gig</option><option>Unemployed</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <h2 class="title" style="font-size:18px">Housing Situation</h2>
+          <div class="grid">
+            <div class="col-6">
+              <label for="currentRent">Current Monthly Rent</label>
+              <input id="currentRent" name="currentRent" type="number" min="0" step="0.01" required />
+            </div>
+            <div class="col-6">
+              <label for="leaseEnd">Lease End Date</label>
+              <input id="leaseEnd" name="leaseEnd" type="date" />
+            </div>
+            <div class="col-12">
+              <label for="risk">Are you at risk of eviction or behind on rent?</label>
+              <select id="risk" name="risk" required>
+                <option value="" selected>Select…</option>
+                <option>No</option><option>Yes, behind on rent</option><option>Yes, received notice</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <h2 class="title" style="font-size:18px">Consent</h2>
+          <p class="muted" style="font-size: 12px">By submitting, you agree that your information may be securely shared with participating nonprofit providers to determine eligibility.</p>
+          <div class="grid">
+            <div class="col-12 checkrow">
+              <input type="checkbox" id="consent" required aria-required="true" />
+              <label for="consent">I consent to data sharing with local housing providers.</label>
+            </div>
+            <div class="col-6">
+              <p><label for="signature">Type Your Full Name (Signature)</label></p>
+              <input id="signature" name="signature" required />
+            </div>
+            <div class="col-6">
+              <p><label for="signDate">Date</label></p>
+              <input id="signDate" name="signDate" type="date" required />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Submit Application</button>
+            <button class="btn btn-sec" type="button" id="downloadDraft">Download Draft (JSON)</button>
+            <button class="btn btn-sec" type="button" id="closeApp">Close</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </template>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const wrapper  = document.querySelector(".page-wrapper");
+      const openBtn  = document.getElementById("open-rental-form-btn");
+      const appPage  = document.querySelector(".app-page");
+      const tpl      = document.getElementById("rental-form-template");
+      const backBtn  = document.getElementById("backFromApp");
+
+      // Abrir slide e inyectar template
+      if (openBtn) {
+        openBtn.addEventListener("click", () => {
+          if (tpl && appPage) {
+            appPage.innerHTML = tpl.innerHTML;
+
+            // Wire de eventos internos del form
+            const form = appPage.querySelector("#rentalAppForm");
+            const downloadBtn = appPage.querySelector("#downloadDraft");
+            if (form) {
+              form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                alert("Application submitted! A partner organization will follow up if you qualify.");
+              });
+            }
+            if (downloadBtn && form) {
+              downloadBtn.addEventListener("click", () => {
+                const data = Object.fromEntries(new FormData(form).entries());
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url; a.download = "rental-assistance-application.json";
+                document.body.appendChild(a); a.click(); a.remove();
+                URL.revokeObjectURL(url);
+              });
+            }
+          }
+          wrapper.classList.add("open");
+          document.body.classList.add("app-open"); // muestra Back, oculta links
+        });
+      }
+
+      // Cerrar slide con el botón Back del header
+      if (backBtn) {
+        backBtn.addEventListener("click", () => {
+          wrapper.classList.remove("open");
+          document.body.classList.remove("app-open");
+          if (appPage) appPage.innerHTML = "";
+        });
+      }
+
+      // Cerrar slide con el botón Close dentro del formulario (delegación)
+      document.addEventListener("click", (e) => {
+        if (e.target && e.target.id === "closeApp") {
+          wrapper.classList.remove("open");
+          document.body.classList.remove("app-open");
+          if (appPage) appPage.innerHTML = "";
+        }
+      });
+
+      // Cerrar con ESC
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && wrapper.classList.contains("open")) {
+          wrapper.classList.remove("open");
+          document.body.classList.remove("app-open");
+          if (appPage) appPage.innerHTML = "";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
