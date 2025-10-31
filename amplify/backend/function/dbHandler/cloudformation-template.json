@@ -1,0 +1,135 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CloudFormation template for the Amplify Lambda function dbHandler that connects to an Aurora DB.",
+  "Parameters": {
+    "env": {
+      "Type": "String"
+    },
+    "functionName": {
+      "Type": "String"
+    },
+    "DBSecretArn": {
+      "Type": "String",
+      "Description": "Secrets Manager ARN that stores the DB username/password (optional if using Data API)."
+    },
+    "DBClusterArn": {
+      "Type": "String",
+      "Description": "Aurora DB Cluster ARN (required for Data API).",
+      "Default": ""
+    },
+    "UseDataApi": {
+      "Type": "String",
+      "Description": "Set to 'true' to use RDS Data API (Aurora Serverless) instead of direct TCP.",
+      "Default": "false"
+    },
+    "SubnetIds": {
+      "Type": "CommaDelimitedList",
+      "Description": "Comma-separated list of subnet ids for VPC access (for direct DB connections).",
+      "Default": ""
+    },
+    "SecurityGroupIds": {
+      "Type": "CommaDelimitedList",
+      "Description": "Comma-separated list of security group ids for the Lambda function (must allow DB access).",
+      "Default": ""
+    }
+  },
+  "Resources": {
+    "LambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": ["lambda.amazonaws.com"]
+              },
+              "Action": ["sts:AssumeRole"]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "lambda-basic-execution",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "secretsmanager-access",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "secretsmanager:GetSecretValue"
+                  ],
+                  "Resource": { "Ref": "DBSecretArn" }
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "rds-data-access",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "rds-data:ExecuteStatement",
+                    "rds-data:BatchExecuteStatement",
+                    "rds-data:BeginTransaction",
+                    "rds-data:CommitTransaction",
+                    "rds-data:RollbackTransaction"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "DbHandlerFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Ref": "functionName" },
+        "Handler": "index.handler",
+        "Runtime": "nodejs18.x",
+        "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"] },
+        "Timeout": 30,
+        "MemorySize": 1024,
+        "Environment": {
+          "Variables": {
+            "DB_SECRET_ARN": { "Ref": "DBSecretArn" },
+            "DB_CLUSTER_ARN": { "Ref": "DBClusterArn" },
+            "USE_DATA_API": { "Ref": "UseDataApi" }
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "FunctionName": {
+      "Value": { "Ref": "DbHandlerFunction" }
+    },
+    "FunctionArn": {
+      "Value": { "Fn::GetAtt": ["DbHandlerFunction", "Arn"] }
+    }
+  }
+}

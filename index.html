@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-api-endpoint="">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,25 +32,11 @@
       <div class="container hero-inner">
         <div>
           <h1>Affordable housing and federal help in one place</h1>
-          <div class="hero-card" role="search" aria-label="Housing search">
-            <form class="search" onsubmit="event.preventDefault(); alert('Execute search…')">
-              <input class="input" type="text" placeholder="City or County" aria-label="Location" />
-              <select aria-label="Price range">
-                <option value="" selected>Price (monthly)</option>
-                <option>Up to $800</option>
-                <option>$800 – $1,200</option>
-                <option>$1,200 – $1,800</option>
-                <option>$1,800+</option>
-              </select>
-              <select aria-label="Rooms">
-                <option value="" selected>Rooms</option>
-                <option>Studio</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3+</option>
-              </select>
-              <button class="btn" type="submit">Search</button>
-            </form>
+          <div class="hero-card">
+            <p class="lead">Find out quickly if you qualify for local rental help — we only ask a few questions.</p>
+            <div style="margin-top:18px;">
+              <button id="open-rental-form-btn" class="cta hero-cta" aria-haspopup="dialog">Check Eligibility</button>
+            </div>
           </div>
           <div class="inline" style="margin-top:10px">
             <span class="badge">✔ Verified Weekly</span>
@@ -168,5 +154,48 @@
       </div>
     </div>
   </footer>
+  <!-- Multi-step modal for applying -->
+  <div id="rental-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="modal-header">
+        <h3 id="modal-title">Apply: Household Info</h3>
+        <button id="modal-close" aria-label="Close">✕</button>
+      </header>
+      <div class="modal-body">
+        <form id="rental-form" novalidate>
+          <section class="form-step" data-step="1">
+            <label for="income-input" class="label">Household monthly income</label>
+            <input id="income-input" class="input2" type="number" min="0" step="1" placeholder="Enter amount in USD" required />
+            <div class="help">We only use this to check basic eligibility.</div>
+            <div class="actions">
+              <button type="button" class="btn" id="step1-next">Next</button>
+            </div>
+          </section>
+
+          <section class="form-step" data-step="2" hidden>
+            <label for="size-input" class="label">Household size (number of people)</label>
+            <input id="size-input" class="input2" type="number" min="1" step="1" placeholder="e.g., 3" required />
+            <div class="help">Include all people who live with you.</div>
+            <div class="actions">
+              <button type="button" class="btn" id="step2-back">Back</button>
+              <button type="button" class="btn" id="step2-next">Next</button>
+            </div>
+          </section>
+
+          <section class="form-step" data-step="3" hidden>
+            <h4>Review</h4>
+            <p>Monthly income: <strong id="review-income">-</strong></p>
+            <p>Household size: <strong id="review-size">-</strong></p>
+            <div class="actions">
+              <button type="button" class="btn" id="step3-back">Back</button>
+              <button type="submit" class="btn" id="submit-btn">Submit</button>
+            </div>
+          </section>
+
+          <div id="form-message" class="help" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

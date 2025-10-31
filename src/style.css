@@ -339,3 +339,48 @@ footer {
   gap:12px; 
   align-items:center; 
 }
+
+/* Modal / multi-step form styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(4,8,20,0.6);
+  z-index: 60;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+.modal-overlay[aria-hidden="false"] {
+  visibility: visible;
+  opacity: 1;
+}
+.modal {
+  width: min(520px, 94%);
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  overflow: hidden;
+}
+.modal-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.modal-body { padding: 18px; }
+.form-step { display: block; }
+.form-step[hidden] { display: none; }
+.actions { margin-top: 12px; display:flex; gap:8px; justify-content:flex-end; }
+.actions .btn { min-width: 96px; }
+#form-message { margin-top: 12px; color: var(--muted); }
+
+/* Larger CTA shown in hero */
+.hero-cta {
+  padding: 14px 20px;
+  font-size: 18px;
+  border-radius: 14px;
+}

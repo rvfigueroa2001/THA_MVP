@@ -1,0 +1,8 @@
+{
+  "function": {
+    "dbHandler": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation"
+    }
+  }
+}

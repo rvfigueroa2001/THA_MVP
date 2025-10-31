@@ -7,6 +7,7 @@ frontend:
     build:
       commands:
         - npm run build
+        - npx amplify-cli@latest push --yes
   artifacts:
     baseDirectory: dist
     files:

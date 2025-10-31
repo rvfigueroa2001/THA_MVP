@@ -1,0 +1,10 @@
+{
+  "name": "dbhandler",
+  "version": "1.0.0",
+  "description": "Lambda that connects to Aurora DB",
+  "main": "index.js",
+  "dependencies": {
+    "mysql2": "^3.4.0",
+    "aws-sdk": "^2.1430.0"
+  }
+}
