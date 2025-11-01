@@ -3,10 +3,9 @@ const path = require('path');
 
 const distDir = path.resolve(__dirname, '..', 'dist');
 const srcName = 'PortalHousing.html';
-const destName = 'portalhousing.html';
+const destNames = ['portalhousing.html', 'index.html'];
 
 const srcPath = path.join(distDir, srcName);
-const destPath = path.join(distDir, destName);
 
 try {
   if (!fs.existsSync(distDir)) {
@@ -19,9 +18,11 @@ try {
     process.exit(0);
   }
 
-  // Copy file (will create lowercase file on case-sensitive FS like Linux)
-  fs.copyFileSync(srcPath, destPath);
-  console.log(`Copied ${srcName} -> ${destName}`);
+  destNames.forEach(destName => {
+    const destPath = path.join(distDir, destName);
+    fs.copyFileSync(srcPath, destPath);
+    console.log(`Copied ${srcName} -> ${destName}`);
+  });
 } catch (err) {
   console.error('Error copying portal housing file:', err);
   process.exit(1);
