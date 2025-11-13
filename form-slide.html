@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Formulario de elegibilidad</title>
+
+  <style>
+    :root {
+      --text: #eef2ff;
+      --muted: #c7cbe6;
+      --brand: #6aa9ff;
+      --brand-2: #7dd6ff;
+    }
+
+    /* ===== Stage (pantalla del wizard) ===== */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .wizard-stage {
+      position: relative;
+      height: 100vh;                  /* ocupa la ventana útil (debajo del header) */
+      display: flex;
+      align-items: center;            /* centro vertical */
+      justify-content: center;        /* centro horizontal */
+      overflow: hidden;
+      padding: 24px;
+      background: radial-gradient(1200px 900px at 10% -10%, #16204a 0%, #0b1020 55%);
+    }
+
+    /* velo suave, sin imagen aquí */
+    .wizard-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(1200px 900px at 10% -10%, rgba(22,32,74,.35) 0%, rgba(11,16,32,1) 55%);
+      pointer-events: none;
+    }
+
+    /* ===== Ilustración de fondo más GRANDE, centrada y sin distorsión ===== */
+    .wizard-stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      z-index: 0;
+      pointer-events: none;
+
+      /* Ajustá estas 2 líneas para tamaño deseado */
+      width: clamp(900px, 85vw, 1600px);  /* más ancha */
+      height: clamp(360px, 48vh, 720px);  /* más alta */
+
+      background: url("background.png") center / contain no-repeat; /* tu imagen */
+      opacity: 0.28;
+      filter: brightness(.9);
+    }
+
+    /* ===== Contenedor principal (tarjeta) ===== */
+    .wizard-container {
+      position: relative;
+      z-index: 1;                      /* por encima del fondo */
+      width: 100%;
+      max-width: 720px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      color: var(--text);
+      backdrop-filter: blur(6px);
+    }
+
+    /* ===== Texto y progreso ===== */
+    .wizard-title {
+      font-size: 22px;
+      margin: 0 0 6px;
+    }
+
+    .wizard-sub {
+      color: var(--muted);
+      margin: 0 0 16px;
+    }
+
+    .progress {
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* ===== Slides ===== */
+    .slide { display: none; animation: fadeIn 0.35s ease; }
+    .slide.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* ===== Inputs ===== */
+    .question {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #0e1530;
+      color: #eef2ff;
+    }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 6px; }
+
+    /* ===== Botones ===== */
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #0b1020;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn.secondary {
+      background: transparent;
+      color: #eef2ff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    @media (max-width: 560px) {
+      .wizard-container { padding: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- No hay header aquí: lo pone index.html -->
+  <div class="wizard-stage">
+    <main class="wizard-container" role="form" aria-labelledby="wiz-title">
+      <h1 id="wiz-title" class="wizard-title">Verifica tu elegibilidad</h1>
+      <p class="wizard-sub">Responde algunas preguntas rápidas para conocer tus matches de vivienda.</p>
+
+      <div class="progress"><div class="progress-bar" id="wiz-progress"></div></div>
+
+      <!-- Paso 1 -->
+      <section class="slide active" data-slide="0">
+        <div class="question">¿Cuál es tu ingreso mensual aproximado (antes de impuestos)?</div>
+        <input type="number" id="wiz-income" min="0" step="100" placeholder="Ej. 2000" />
+        <div class="hint">Usa números enteros (USD).</div>
+        <div class="actions">
+          <button class="btn" id="wiz-next-0">Siguiente</button>
+          <button class="btn secondary" data-close-app type="button">Cerrar</button>
+        </div>
+      </section>
+
+      <!-- Paso 2 -->
+      <section class="slide" data-slide="1">
+        <div class="question">¿Cuántas personas viven en tu hogar?</div>
+        <select id="wiz-household">
+          <option value="">Selecciona…</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+        </select>
+        <div class="actions">
+          <button class="btn secondary" id="wiz-prev-1">Atrás</button>
+          <button class="btn" id="wiz-next-1">Siguiente</button>
+          <button class="btn secondary" data-close-app type="button">Cerrar</button>
+        </div>
+      </section>
+
+      <!-- Paso 3 -->
+      <section class="slide" data-slide="2">
+        <div class="question">¿Estás rentando actualmente o buscando vivienda?</div>
+        <select id="wiz-status">
+          <option value="">Selecciona…</option>
+          <option value="rentando">Rentando</option>
+          <option value="buscando">Buscando</option>
+        </select>
+        <div class="actions">
+          <button class="btn secondary" id="wiz-prev-2">Atrás</button>
+          <button class="btn" id="wiz-next-2">Siguiente</button>
+          <button class="btn secondary" data-close-app type="button">Cerrar</button>
+        </div>
+      </section>
+
+      <!-- Paso 4 -->
+      <section class="slide" data-slide="3">
+        <div class="question">Finaliza tu registro</div>
+        <p class="hint">Al finalizar, te redirigiremos a tus matches de vivienda.</p>
+        <div class="actions">
+          <button class="btn secondary" id="wiz-prev-3">Atrás</button>
+          <button class="btn" id="wiz-finish">Finalizar</button>
+          <button class="btn secondary" data-close-app type="button">Cerrar</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function() {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const progress = document.getElementById("wiz-progress");
+      let current = 0;
+
+      function show(i) {
+        slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+        current = i;
+        progress.style.width = ((i + 1) / slides.length) * 100 + "%";
+      }
+
+      function canGoNext(step) {
+        if (step === 0) {
+          const v = Number(document.getElementById("wiz-income").value);
+          return !Number.isNaN(v) && v >= 0;
+        }
+        if (step === 1) return document.getElementById("wiz-household").value !== "";
+        if (step === 2) return document.getElementById("wiz-status").value !== "";
+        return true;
+      }
+
+      const next0 = document.getElementById("wiz-next-0");
+      const next1 = document.getElementById("wiz-next-1");
+      const next2 = document.getElementById("wiz-next-2");
+      const prev1 = document.getElementById("wiz-prev-1");
+      const prev2 = document.getElementById("wiz-prev-2");
+      const prev3 = document.getElementById("wiz-prev-3");
+      const finish = document.getElementById("wiz-finish");
+
+      if (next0) next0.addEventListener("click", () => { if (canGoNext(0)) show(1); else alert("Ingresa un ingreso válido."); });
+      if (next1) next1.addEventListener("click", () => { if (canGoNext(1)) show(2); else alert("Selecciona el tamaño del hogar."); });
+      if (next2) next2.addEventListener("click", () => { if (canGoNext(2)) show(3); else alert("Selecciona tu situación de vivienda."); });
+
+      if (prev1) prev1.addEventListener("click", () => show(0));
+      if (prev2) prev2.addEventListener("click", () => show(1));
+      if (prev3) prev3.addEventListener("click", () => show(2));
+
+      // Finalizar → redirigir con parámetros
+      if (finish) finish.addEventListener("click", () => {
+        const data = {
+          income: Number(document.getElementById("wiz-income").value),
+          household: document.getElementById("wiz-household").value,
+          status: document.getElementById("wiz-status").value
+        };
+        const params = new URLSearchParams({
+          income: String(data.income ?? ""),
+          household: String(data.household ?? ""),
+          status: String(data.status ?? "")
+        });
+        const url = `BestMatch.html?${params.toString()}`;
+        try { parent.postMessage({ type: "navigate", url, payload: data }, "*"); } catch (e) {}
+        try { window.location.href = url; } catch (e) {}
+      });
+
+      // Cerrar (overlay)
+      document.querySelectorAll("[data-close-app]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          try { parent.postMessage({ type: "closeApp" }, "*"); } catch (e) {}
+        });
+      });
+
+      // “Back” desde el host
+      window.addEventListener("message", (ev) => {
+        const msg = ev?.data;
+        if (!msg) return;
+        if (msg.type === "wizardPrev") {
+          if (current > 0) show(current - 1);
+          else { try { parent.postMessage({ type: "closeApp" }, "*"); } catch (e) {} }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

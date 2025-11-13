@@ -93,7 +93,7 @@
       border-radius: 18px;
       padding: 28px 32px;
       width: 300px;
-      height: 90px;           /* un poco más alto para respirar */
+      height: 90px;
       display: inline-block;
       box-shadow: 0 10px 50px rgba(0, 0, 0, 0.4);
     }
@@ -181,58 +181,49 @@
     .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
     .btn-sec { background: transparent; border: 1px solid rgba(255,255,255,.18); color: #eef2ff; }
     .checkrow { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-    @media (max-width:720px){ .col-6, .col-4 { grid-column: span 12; } }
 
-    /* ========== OVERRIDES para centrar y borde azul del botón ========== */
-    .hero-card {
-      display: flex;               /* override: centra contenido */
-      align-items: center;
-      justify-content: center;
-    }
-    .hero-card .inline {
-      display: flex;               /* override: asegura centrado horizontal */
-      justify-content: center;
-      width: 100%;
-    }
+    /* OVERRIDES para centrar y borde azul del botón */
+    .hero-card { display: flex; align-items: center; justify-content: center; }
+    .hero-card .inline { display: flex; justify-content: center; width: 100%; }
     .hero-card .btn {
-      border: 2px solid var(--brand);                 /* marco azul */
+      border: 2px solid var(--brand);
       box-shadow: 0 0 0 0 rgba(106,169,255,0);
       transition: filter .2s ease, box-shadow .2s ease, transform .02s ease;
     }
-    .hero-card .btn:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(106,169,255,.35);    /* glow accesible */
-    }
+    .hero-card .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(106,169,255,.35); }
     .hero-card .btn:active { transform: translateY(1px); }
 
-    /* Centrado perfecto del contenido del hero */
-.hero {
-  display: flex;               /* ya lo tenías, reafirmamos */
-  align-items: center;         /* centra vertical */
-  justify-content: center;     /* centra horizontal */
-  text-align: center;
-}
+    .hero { display: flex; align-items: center; justify-content: center; text-align: center; }
+    .hero-inner { display: flex; flex-direction: column; align-items: center; gap: 24px; margin: 0 auto; }
+    .hero-card { margin: 0 auto; }
+    .hero-card .inline { display: flex; justify-content: center; width: 100%; }
 
-/* Asegura que todo dentro del hero quede centrado */
-.hero-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;         /* alinea el card al centro */
-  gap: 24px;                   /* espacio entre h1 y card */
-  margin: 0 auto;              /* centra el contenedor */
-}
-
-/* Centra el card como bloque */
-.hero-card {
-  margin: 0 auto;              /* por si el contenedor crece */
-}
-
-/* Por si algún wrapper interior estira ancho: lo centramos igual */
-.hero-card .inline {
-  display: flex;
-  justify-content: center;
+    /* Iframe para fallback local */
+.app-iframe {
   width: 100%;
+  min-height: calc(100vh - 80px);
+  border: 0;
+  display: block;
 }
+
+:root { --header-h: 64px; } /* ajusta si tu header mide distinto */
+
+header { z-index: 2000; }
+
+.app-page {
+  position: fixed;
+  top: var(--header-h);                 /* debajo del header */
+  left: 100%;
+  width: 100vw;
+  height: calc(100vh - var(--header-h));/* resto de la pantalla */
+  z-index: 100;                          /* por debajo del header */
+  /* Mantén aquí tus otros estilos previos (.app-page) */
+}
+
+.page-wrapper.open .app-page {
+  transform: translateX(-100%);
+}
+
 
   </style>
 </head>
@@ -240,7 +231,7 @@
 <body>
   <header>
     <div class="container nav">
-      <a class="brand" href="#"><span>AffordaHouse</span></a>
+      <a class="brand" href="#"><span>AffordaHouse | Triverge</span></a>
 
       <!-- Botón Back (aparece con el slide abierto) -->
       <button class="back-btn" id="backFromApp" type="button" aria-label="Back to home">← Back</button>
@@ -267,7 +258,7 @@
           <h1>Affordable Housing & Federal Help in One Place</h1>
           <div class="hero-card" role="search" aria-label="Housing search">
             <div class="inline">
-              <button class="btn" id="open-rental-form-btn" type="button">Start Application</button>
+              <button class="btn" id="open-rental-form-btn" type="button" onclick="startApplication()">Start Application</button>
             </div>
           </div>
           <div class="badges-below">
@@ -279,7 +270,7 @@
         </div>
       </section>
 
-      <!-- ======= PANTALLA (VACÍA: se llena con el template) ======= -->
+      <!-- ======= PANTALLA (VACÍA: se llena con el slide) ======= -->
       <section class="app-page"></section>
     </div>
 
@@ -333,7 +324,8 @@
     </div>
   </footer>
 
-  <!-- ========== TEMPLATE DEL FORMULARIO ========== -->
+  <!-- ========== TEMPLATE ORIGINAL COMENTADO (NO BORRAR) ========== -->
+  <!--
   <template id="rental-form-template">
     <main class="form-wrap">
       <div class="card">
@@ -448,74 +440,153 @@
       </div>
     </main>
   </template>
+  -->
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const wrapper  = document.querySelector(".page-wrapper");
-      const openBtn  = document.getElementById("open-rental-form-btn");
-      const appPage  = document.querySelector(".app-page");
-      const tpl      = document.getElementById("rental-form-template");
-      const backBtn  = document.getElementById("backFromApp");
+  document.addEventListener("DOMContentLoaded", () => {
+    const wrapper  = document.querySelector(".page-wrapper");
+    const appPage  = document.querySelector(".app-page");
+    const backBtn  = document.getElementById("backFromApp");
+    const openBtn  = document.getElementById("open-rental-form-btn");
 
-      // Abrir slide e inyectar template
-      if (openBtn) {
-        openBtn.addEventListener("click", () => {
-          if (tpl && appPage) {
-            appPage.innerHTML = tpl.innerHTML;
+    const SLIDE_URL = "form-slide.html";
 
-            // Wire de eventos internos del form
-            const form = appPage.querySelector("#rentalAppForm");
-            const downloadBtn = appPage.querySelector("#downloadDraft");
-            if (form) {
-              form.addEventListener("submit", (e) => {
-                e.preventDefault();
-                alert("Application submitted! A partner organization will follow up if you qualify.");
-              });
-            }
-            if (downloadBtn && form) {
-              downloadBtn.addEventListener("click", () => {
-                const data = Object.fromEntries(new FormData(form).entries());
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url; a.download = "rental-assistance-application.json";
-                document.body.appendChild(a); a.click(); a.remove();
-                URL.revokeObjectURL(url);
-              });
-            }
-          }
-          wrapper.classList.add("open");
-          document.body.classList.add("app-open"); // muestra Back, oculta links
-        });
+    // Carga el wizard externo
+    async function loadExternalForm() {
+      const isFileProtocol = location.protocol === "file:";
+
+      // Si estás abriendo con file://, usamos iframe para evitar CORS
+      if (isFileProtocol) {
+        appPage.innerHTML = "";
+        const iframe = document.createElement("iframe");
+        iframe.src = SLIDE_URL;
+        iframe.className = "app-iframe"; // recuerda tener la clase en CSS
+        appPage.appendChild(iframe);
+        return;
       }
 
-      // Cerrar slide con el botón Back del header
-      if (backBtn) {
-        backBtn.addEventListener("click", () => {
-          wrapper.classList.remove("open");
-          document.body.classList.remove("app-open");
-          if (appPage) appPage.innerHTML = "";
+      // Si estás en http(s), usamos fetch para inyectar el HTML y ejecutar scripts
+      try {
+        const response = await fetch(SLIDE_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error("No se pudo cargar " + SLIDE_URL);
+        const html = await response.text();
+        appPage.innerHTML = html;
+
+        // Reinyectar <script> para que se ejecute
+        appPage.querySelectorAll("script").forEach(oldScript => {
+          const newScript = document.createElement("script");
+          if (oldScript.src) newScript.src = oldScript.src;
+          else newScript.textContent = oldScript.textContent;
+          if (oldScript.type) newScript.type = oldScript.type;
+          document.body.appendChild(newScript);
+          oldScript.remove();
         });
+      } catch (err) {
+        console.error("Error cargando slide:", err);
+        // Fallback a iframe si falla el fetch por cualquier motivo
+        appPage.innerHTML = "";
+        const iframe = document.createElement("iframe");
+        iframe.src = SLIDE_URL;
+        iframe.className = "app-iframe";
+        appPage.appendChild(iframe);
+      }
+    }
+
+    // Abrir la app
+    window.startApplication = async function startApplication() {
+      await loadExternalForm();
+      wrapper.classList.add("open");
+      document.body.classList.add("app-open");
+    };
+
+    // Listener alternativo (por si quitás el onclick inline)
+    if (openBtn) openBtn.addEventListener("click", () => startApplication());
+
+    // ---- NUEVO: lógica Back (←) ----
+    function handleBack() {
+      // Si está en iframe (file://)
+      const iframe = appPage.querySelector("iframe");
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: "wizardPrev" }, "*");
+        return;
       }
 
-      // Cerrar slide con el botón Close dentro del formulario (delegación)
-      document.addEventListener("click", (e) => {
-        if (e.target && e.target.id === "closeApp") {
-          wrapper.classList.remove("open");
-          document.body.classList.remove("app-open");
-          if (appPage) appPage.innerHTML = "";
+      // Si está embebido (http/https con fetch)
+      const active = appPage.querySelector(".slide.active");
+      if (active) {
+        const prevBtn = active.querySelector('[id^="wiz-prev-"]');
+        if (prevBtn) {
+          prevBtn.click(); // va al paso anterior
+          return;
         }
-      });
+      }
 
-      // Cerrar con ESC
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && wrapper.classList.contains("open")) {
-          wrapper.classList.remove("open");
-          document.body.classList.remove("app-open");
-          if (appPage) appPage.innerHTML = "";
-        }
-      });
+      // No hay paso anterior → cerrar
+      closeApplication();
+    }
+
+    // Cerrar (Back del header)
+    if (backBtn) backBtn.addEventListener("click", handleBack);
+
+    // Delegación: botón Close dentro del slide (solo funciona cuando NO es iframe)
+    document.addEventListener("click", (e) => {
+      const t = e.target;
+      if (!t) return;
+      if (t.id === "closeApp" || t.matches("[data-close-app], .closeApp")) {
+        closeApplication();
+      }
     });
-  </script>
+
+    // ESC para cerrar
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && wrapper.classList.contains("open")) closeApplication();
+    });
+
+    // ---- NUEVO: helper para navegar a matches.html desde wizardFinished ----
+    function navigateToMatches(payload) {
+      const p = payload || {};
+      const params = new URLSearchParams({
+        income: String(p.income ?? ""),
+        household: String(p.household ?? ""),
+        status: String(p.status ?? "")
+      });
+      window.location.href = `matches.html?${params.toString()}`;
+    }
+
+    // Mensajes desde el iframe / wizard
+    window.addEventListener("message", (ev) => {
+      const data = ev?.data;
+      if (!data) return;
+
+      if (data.type === "closeApp") {
+        closeApplication();
+      }
+
+      // NUEVO: navegación directa (el wizard manda la URL lista)
+      if (data.type === "navigate" && data.url) {
+        window.location.href = data.url;
+      }
+
+      // Opcional: si el wizard envía wizardFinished con payload, también redirigimos
+      if (data.type === "wizardFinished" && data.payload) {
+        // si preferís que wizardFinished NO navegue, comentá la siguiente línea
+        navigateToMatches(data.payload);
+      }
+    });
+
+    function closeApplication() {
+      wrapper.classList.remove("open");
+      document.body.classList.remove("app-open");
+      appPage.innerHTML = "";
+    }
+
+    // año footer
+    const y = document.getElementById("year");
+    if (y) y.textContent = new Date().getFullYear();
+  });
+  
+</script>
+
+
 </body>
 </html>
