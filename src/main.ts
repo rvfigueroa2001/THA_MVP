@@ -1,6 +1,7 @@
 // buildStamp: 2025-10-31T00:00:00Z - injected to force rebuild
 import './style.css'
 
+
 // Update copyright year
 document.getElementById('year')!.textContent = new Date().getFullYear().toString();
 
