@@ -334,11 +334,13 @@
   </footer>
 
   <!-- ========== TEMPLATE DEL FORMULARIO ========== -->
-  <template id="rental-form-template">
+ <template id="rental-form-template">
   <main class="form-wrap">
     <div class="card">
       <h1 class="title">Quick Eligibility Check</h1>
-      <p class="muted">Answer two short questions to start your affordable housing match.</p>
+      <p class="muted">
+        Answer two short questions so we can estimate your AMI and find matching properties.
+      </p>
 
       <form id="rentalAppForm">
         <!-- ========== STEP 1: MONTHLY INCOME ========== -->
@@ -378,9 +380,14 @@
             />
           </div>
 
+          <div class="col-12">
+            <!-- Where we show AMI % + matches -->
+            <div id="amiResult" class="muted" style="margin-top: 10px; font-size: 0.9rem;"></div>
+          </div>
+
           <div class="col-12 actions">
             <button class="btn btn-sec" type="button" id="backToStep1">Back</button>
-            <button class="btn" type="submit">Submit</button>
+            <button class="btn" type="submit" id="submitAppBtn">Check Eligibility</button>
             <button class="btn btn-sec" type="button" id="downloadDraft">Download Draft (JSON)</button>
             <button class="btn btn-sec" type="button" id="closeApp">Close</button>
           </div>
@@ -400,7 +407,7 @@
       const backBtn  = document.getElementById("backFromApp");
 
       // Abrir slide e inyectar template
-      if (openBtn) {
+if (openBtn) {
   openBtn.addEventListener("click", () => {
     if (tpl && appPage) {
       appPage.innerHTML = tpl.innerHTML;
@@ -411,6 +418,11 @@
       const step2           = appPage.querySelector('.step[data-step="2"]');
       const toStep2Btn      = appPage.querySelector("#toStep2");
       const backToStep1Btn  = appPage.querySelector("#backToStep1");
+      const amiResultBox    = appPage.querySelector("#amiResult");
+      const submitBtn       = appPage.querySelector("#submitAppBtn");
+
+      // 👉 PUT YOUR REAL API GATEWAY URL HERE
+      const AMI_API_URL = "https://lmmx3xcao2.execute-api.us-east-2.amazonaws.com/match";
 
       // Helper to switch steps
       const showStep = (stepNum) => {
@@ -422,12 +434,12 @@
           step1.hidden = true;
           step2.hidden = false;
         }
+        if (amiResultBox) amiResultBox.textContent = "";
       };
 
-      // Go to Step 2 (only if Step 1 is valid)
+      // Go to Step 2 (validate Step 1)
       if (toStep2Btn && form) {
         toStep2Btn.addEventListener("click", () => {
-          // Check required fields in step 1
           if (form.reportValidity()) {
             showStep(2);
           }
@@ -439,19 +451,120 @@
         backToStep1Btn.addEventListener("click", () => showStep(1));
       }
 
-      // Handle Submit (from Step 2)
+      // Submit: call your Lambda via API Gateway
       if (form) {
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
           e.preventDefault();
-          alert("Application submitted! We’ll use your income and household size to check program eligibility.");
+
+          if (!form.reportValidity()) return;
+
+          const formData = new FormData(form);
+          const monthlyIncome  = Number(formData.get("monthlyIncome") || 0);
+          const householdSize  = Number(formData.get("householdSize") || 0);
+
+          // Convert monthly → annual for the Lambda
+          const annualIncome = monthlyIncome * 12;
+
+          if (amiResultBox) {
+            amiResultBox.textContent = "Checking your eligibility...";
+          }
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Checking...";
+          }
+
+          try {
+            const resp = await fetch(AMI_API_URL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                household_income: annualIncome,
+                household_size: householdSize
+              })
+            });
+
+            if (!resp.ok) {
+              throw new Error("Server error: " + resp.status);
+            }
+
+            let data = await resp.json();
+
+            // In case API Gateway returns the Lambda envelope (rare, but safe to handle):
+            // { statusCode, body: "..." }
+            if (data && data.body && typeof data.body === "string") {
+              try {
+                data = JSON.parse(data.body);
+              } catch (_) {}
+            }
+
+            if (data.error) {
+              if (amiResultBox) {
+                amiResultBox.textContent = data.error;
+              }
+              return;
+            }
+
+            const userAmiPercent = data.user_ami_percent;
+            const matches = Array.isArray(data.matching_properties)
+              ? data.matching_properties
+              : [];
+
+            if (amiResultBox) {
+              let html = `
+                <strong>Result:</strong> You are at approximately
+                <strong>${userAmiPercent ?? "N/A"}% AMI</strong>.
+              `;
+
+              if (matches.length > 0) {
+                html += `<br />We found <strong>${matches.length}</strong> matching properties.`;
+
+                const top3 = matches.slice(0, 3);
+                html += "<br /><br /><strong>Example matches:</strong><ul>";
+                html += top3
+                  .map((p) => {
+                    const name = p.property_name || "Property";
+                    const rent = p.rent != null ? `$${p.rent}/mo` : "Rent N/A";
+                    const beds = p.bedrooms != null ? `${p.bedrooms} bed` : "";
+                    const zip  = p.zip_code ? ` (${p.zip_code})` : "";
+                    return `<li>${name} – ${rent}${beds ? ", " + beds : ""}${zip}</li>`;
+                  })
+                  .join("");
+                html += "</ul>";
+              } else {
+                html += "<br />We didn’t find matching properties in the database for these values.";
+              }
+
+              amiResultBox.innerHTML = html;
+            }
+          } catch (err) {
+            console.error(err);
+            if (amiResultBox) {
+              amiResultBox.textContent =
+                "There was a problem checking your eligibility. Please try again later.";
+            }
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Check Eligibility";
+            }
+          }
         });
       }
 
-      // Download Draft JSON (both answers)
+      // Download Draft JSON (just your raw answers)
       if (downloadBtn && form) {
         downloadBtn.addEventListener("click", () => {
           const data = Object.fromEntries(new FormData(form).entries());
-          const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+          // Optional: also store the annual income we actually send
+          const monthlyIncome = Number(data.monthlyIncome || 0);
+          data.household_income = monthlyIncome * 12;
+          data.household_size   = Number(data.householdSize || 0);
+
+          const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: "application/json",
+          });
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -464,11 +577,11 @@
       }
     }
 
-      // Open the slide-over
-      wrapper.classList.add("open");
-      document.body.classList.add("app-open");
-    });
-  }
+    // Open the slide-over
+    wrapper.classList.add("open");
+    document.body.classList.add("app-open");
+  });
+}
   
         // Cerrar slide (Back)
         if (backBtn) {
