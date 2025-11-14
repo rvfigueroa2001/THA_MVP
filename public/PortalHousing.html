@@ -453,105 +453,86 @@ if (openBtn) {
 
       // Submit: call your Lambda via API Gateway
       if (form) {
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-          if (!form.reportValidity()) return;
+    if (!form.reportValidity()) return;
 
-          const formData = new FormData(form);
-          const monthlyIncome  = Number(formData.get("monthlyIncome") || 0);
-          const householdSize  = Number(formData.get("householdSize") || 0);
+    const formData = new FormData(form);
+    const monthlyIncome  = Number(formData.get("monthlyIncome") || 0);
+    const householdSize  = Number(formData.get("householdSize") || 0);
 
-          // Convert monthly → annual for the Lambda
-          const annualIncome = monthlyIncome * 12;
+    // Convert monthly → annual for the Lambda
+    const annualIncome = monthlyIncome * 12;
 
-          if (amiResultBox) {
-            amiResultBox.textContent = "Checking your eligibility...";
-          }
-          if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = "Checking...";
-          }
+    if (amiResultBox) {
+      amiResultBox.textContent = "Checking your eligibility...";
+    }
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Checking...";
+    }
 
-          try {
-            const resp = await fetch(AMI_API_URL, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                household_income: annualIncome,
-                household_size: householdSize
-              })
-            });
+    try {
+      const resp = await fetch(AMI_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          household_income: annualIncome,
+          household_size: householdSize
+        })
+      });
 
-            if (!resp.ok) {
-              throw new Error("Server error: " + resp.status);
-            }
-
-            let data = await resp.json();
-
-            // In case API Gateway returns the Lambda envelope (rare, but safe to handle):
-            // { statusCode, body: "..." }
-            if (data && data.body && typeof data.body === "string") {
-              try {
-                data = JSON.parse(data.body);
-              } catch (_) {}
-            }
-
-            if (data.error) {
-              if (amiResultBox) {
-                amiResultBox.textContent = data.error;
-              }
-              return;
-            }
-
-            const userAmiPercent = data.user_ami_percent;
-            const matches = Array.isArray(data.matching_properties)
-              ? data.matching_properties
-              : [];
-
-            if (amiResultBox) {
-              let html = `
-                <strong>Result:</strong> You are at approximately
-                <strong>${userAmiPercent ?? "N/A"}% AMI</strong>.
-              `;
-
-              if (matches.length > 0) {
-                html += `<br />We found <strong>${matches.length}</strong> matching properties.`;
-
-                const top3 = matches.slice(0, 3);
-                html += "<br /><br /><strong>Example matches:</strong><ul>";
-                html += top3
-                  .map((p) => {
-                    const name = p.property_name || "Property";
-                    const rent = p.rent != null ? `$${p.rent}/mo` : "Rent N/A";
-                    const beds = p.bedrooms != null ? `${p.bedrooms} bed` : "";
-                    const zip  = p.zip_code ? ` (${p.zip_code})` : "";
-                    return `<li>${name} – ${rent}${beds ? ", " + beds : ""}${zip}</li>`;
-                  })
-                  .join("");
-                html += "</ul>";
-              } else {
-                html += "<br />We didn’t find matching properties in the database for these values.";
-              }
-
-              amiResultBox.innerHTML = html;
-            }
-          } catch (err) {
-            console.error(err);
-            if (amiResultBox) {
-              amiResultBox.textContent =
-                "There was a problem checking your eligibility. Please try again later.";
-            }
-          } finally {
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = "Check Eligibility";
-            }
-          }
-        });
+      if (!resp.ok) {
+        throw new Error("Server error: " + resp.status);
       }
+
+      let data = await resp.json();
+
+      // In case API Gateway wraps the body as a string
+      if (data && data.body && typeof data.body === "string") {
+        try {
+          data = JSON.parse(data.body);
+        } catch (_) {}
+      }
+
+      if (data.error) {
+        if (amiResultBox) {
+          amiResultBox.textContent = data.error;
+        }
+        return;
+      }
+
+      const userAmiPercent = data.user_ami_percent;
+      const matches = Array.isArray(data.matching_properties)
+        ? data.matching_properties
+        : [];
+
+      // 👉 Save results to localStorage for the results page
+      const payload = {
+        userAmiPercent,
+        matches
+      };
+      localStorage.setItem("housingResults", JSON.stringify(payload));
+
+      // 👉 Redirect to the results page
+      window.location.href = "results.html";
+    } catch (err) {
+      console.error(err);
+      if (amiResultBox) {
+        amiResultBox.textContent =
+          "There was a problem checking your eligibility. Please try again later.";
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Check Eligibility";
+      }
+    }
+  });
+}
 
       // Download Draft JSON (just your raw answers)
       if (downloadBtn && form) {
