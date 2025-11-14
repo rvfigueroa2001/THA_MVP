@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AffordaHouse – Results</title>
+  <meta name="description" content="Affordable housing matches based on your AMI." />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111738;
+      --panel-2: #0e1530;
+      --text: #eef2ff;
+      --muted: #c7cbe6;
+      --brand: #6aa9ff;
+      --brand-2: #7dd6ff;
+      --ok: #86efac;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial;
+      color: var(--text);
+      background: radial-gradient(1200px 900px at 10% -10%, #16204a 0%, var(--bg) 55%);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1100px, 96%); margin-inline: auto; }
+
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: saturate(150%) blur(8px);
+      background: rgba(10, 14, 40, .6);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .3px; }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #0b1020;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    main { padding: 32px 0 48px; }
+    h1 { margin-top: 0; }
+    .muted { color: var(--muted); }
+    .summary {
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .grid { display: grid; gap: 16px; }
+    @media (min-width: 768px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+    }
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 1.05rem;
+    }
+    .tagline { font-size: 0.9rem; margin-bottom: 6px; }
+    .rent { font-weight: 700; margin-top: 6px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(134, 239, 172,.12);
+      border: 1px solid rgba(134, 239, 172,.45);
+      color: var(--ok);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    footer {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 24px 0 40px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <span>🏠</span>
+        <span>AffordaHouse Results</span>
+      </div>
+      <button class="btn" onclick="window.location.href='PortalHousing.html'">← Back to Start</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section id="resultsSection">
+        <!-- Filled via JS -->
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      Affordable housing prototype – results view.
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const section = document.getElementById("resultsSection");
+      const raw = localStorage.getItem("housingResults");
+
+      if (!raw) {
+        section.innerHTML = `
+          <div class="summary">
+            <h1>No results found</h1>
+            <p class="muted">
+              We couldn't find any saved results. Please start a new eligibility check from the home page.
+            </p>
+            <button class="btn" onclick="window.location.href='PortalHousing.html'">
+              Start New Check
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        section.innerHTML = `
+          <div class="summary">
+            <h1>Error loading results</h1>
+            <p class="muted">There was an error reading your saved results. Please try again.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const ami = data.userAmiPercent;
+      const matches = Array.isArray(data.matches) ? data.matches : [];
+
+      let html = `
+        <div class="summary">
+          <h1>Your Matches</h1>
+          <p class="muted">
+            Based on your answers, you're at approximately
+            <strong>${ami != null ? ami + '% AMI' : 'N/A'}</strong>.
+          </p>
+          <p class="muted">
+            We found <strong>${matches.length}</strong> properties that may fit this AMI range.
+          </p>
+        </div>
+      `;
+
+      if (matches.length === 0) {
+        html += `
+          <p class="muted">
+            No properties matched your criteria in the database. Try adjusting your search or contact a housing counselor.
+          </p>
+        `;
+      } else {
+        html += `<div class="grid">`;
+        matches.forEach((p) => {
+          const name = p.property_name || "Property";
+          const addr = p.address || "";
+          const zip = p.zip_code || "";
+          const beds = p.bedrooms != null ? `${p.bedrooms} bed` : "N/A";
+          const baths = p.bathrooms != null ? `${p.bathrooms} bath` : "N/A";
+          const rent = p.rent != null ? `$${p.rent}/mo` : "Rent N/A";
+          const amiLimit = p.ami_limit_percent != null ? `${p.ami_limit_percent}% AMI cap` : "";
+          const email = p.contact_email || "";
+          const phone = p.contact_phone || "";
+
+          html += `
+            <article class="card">
+              <h2>${name}</h2>
+              <p class="tagline">${addr}${zip ? ", " + zip : ""}</p>
+              <p class="muted">${beds} · ${baths}</p>
+              <p class="rent">${rent}</p>
+              ${amiLimit ? `<p class="muted"><span class="pill">Up to ${amiLimit}</span></p>` : ""}
+              <p class="muted" style="margin-top: 8px;">
+                ${email ? `Email: <a href="mailto:${email}">${email}</a><br />` : ""}
+                ${phone ? `Phone: <a href="tel:${phone}">${phone}</a>` : ""}
+              </p>
+            </article>
+          `;
+        });
+        html += `</div>`;
+      }
+
+      section.innerHTML = html;
+    });
+  </script>
+</body>
+</html>
